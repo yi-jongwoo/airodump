@@ -3,7 +3,7 @@ all : airodump
 airodump : main.o proto_structures.o dot11.o
 	g++ main.o proto_structures.o dot11.o -lpcap -o airodump
 
-main.o : main.cpp dot11.h proto_structures.h
+main.o : main.cpp dot11.h proto_structures.h addr_set.h
 	g++ -c main.cpp -o main.o -std=c++20 -Wno-multichar
 
 proto_structures.o : proto_structures.cpp proto_structures.h
