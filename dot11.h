@@ -11,7 +11,7 @@ struct __attribute__((packed)) beacon_frame{
 	char tag[0];
 	bool is_beacon();
 	std::string essid();
-	std::string enc();
+	std::string enc(int);
 };
 struct __attribute__((packed)) dot11{
 	uint8_t data[0];

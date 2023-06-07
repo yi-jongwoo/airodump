@@ -30,7 +30,7 @@ void prn(){
 		ex.lock();
 		system("clear");
 		cout<<"BSSID             POWER #BEACON #DATA ENC  NAME\n";
-		for(auto[bs,ext]:L)
+		for(auto[bs,ext]:L)if(get<1>(ext))
 			cout<<(std::string)(mac_addr)bs<<' '
 			<<get<0>(ext)<<"   "
 			<<int5(get<1>(ext))<<"   "
@@ -42,7 +42,7 @@ void prn(){
 	}
 }
 
-void dot11parse(dot11& packet){
+void dot11parse(dot11& packet,int len){
 	beacon_frame& bf=*packet.bf();
 	mac_addr id=bf.bssid;
 	int power=(int8_t)packet.pwr();
@@ -54,7 +54,7 @@ void dot11parse(dot11& packet){
 		return;
 	}
 	std::string name=bf.essid();
-	std::string enc=bf.enc();
+	std::string enc=bf.enc((char*)&packet-(char*)&bf+len-sizeof bf);
 	//cout<<name<<' '<<enc<<endl;
 	ex.lock();
 	get<0>(L[id])=power;
@@ -82,6 +82,6 @@ int main(int c,char** v){
 			printf("pcap listing failed\n");
 			exit(1);
 		}
-		dot11parse(*(dot11*)ptr);
+		dot11parse(*(dot11*)ptr,hdr->caplen);
 	}
 }

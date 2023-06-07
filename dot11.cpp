@@ -9,12 +9,20 @@ std::string beacon_frame::essid(){
 		return std::string();
 	return std::string(tag+2,tag[1]);
 }
-std::string beacon_frame::enc(){
+std::string beacon_frame::enc(int tlen){
+	
 	uint8_t* it=(uint8_t*)tag;
-	while(it[0]!=0x30){
+	while(((int8_t*)it-(int8_t*)tag)<tlen&&it[0]!=0x30){
 		it+=2+it[1];
 	}
-	return it[2]==1?"WPA ":"WPA2";
+	if(it[0]!=0x30)return "NULL";
+
+	int x=*(uint16_t*)(it+8);
+	switch(it[15+4*x]){
+		case 1:return "WPA ";
+		case 2:return "WPA2";
+	}
+	return "UNKN";
 }
 uint8_t dot11::pwr(){
 	static const int sz[]={8,1,1,4,2,1};
